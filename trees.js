@@ -5,7 +5,6 @@
 'use strict';
 
 const STORE = 'trees-studio-v1';
-const OLD_STORE = 'shapes-trees-v2';   // where this page saved before it moved to its own site: picked up once if there is nothing under the new name
 const NS = 'http://www.w3.org/2000/svg';
 const $ = id => document.getElementById(id);
 const mk = (tag, attrs, parent) => {
@@ -1556,7 +1555,7 @@ function toast(t) { const el = $('toast'); el.textContent = t; el.classList.add(
 // ------------------------------------------------------------------ start
 function start() {
   let saved = null;
-  try { saved = JSON.parse(localStorage.getItem(STORE) || localStorage.getItem(OLD_STORE)); } catch (e) { /* ignore */ }
+  try { saved = JSON.parse(localStorage.getItem(STORE)); } catch (e) { /* ignore */ }
   if (saved && saved.doc && (saved.doc.roots || saved.doc.root)) {
     doc = normDoc(saved.doc);
     fmt = saved.fmt || 'bracket';
