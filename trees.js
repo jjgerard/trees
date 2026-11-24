@@ -756,7 +756,24 @@ function syncSource() {
     : fmt === 'qtree' && doc.arrows.length ? 'qtree cannot draw movement arrows. Use forest or TikZ for those.' : '';
   errEl.textContent = note; errEl.className = note ? 'ok' : '';
 }
-function applySource(text, force) {
+const preOrder = () => { const out = []; const w = n => { out.push(n); n.children.forEach(w); }; doc.roots.forEach(w); return out; };
+function placeArrows(spec) {                         // [['t_i','DP_i'], ['NP#2','NP#1']] -> arrows on the page; returns how many could not be placed
+  const nodes = preOrder();
+  const end = txt => {
+    const m = /^(.*?)(?:#(\d+))?$/.exec(String(txt).trim());
+    const hits = nodes.filter(n => n.label === m[1].trim());
+    return hits[(m[2] ? +m[2] : 1) - 1] || null;
+  };
+  let miss = 0;
+  for (const [f, t] of spec || []) {
+    const a = end(f), b = end(t);
+    if (!a || !b || a === b) { miss++; continue; }
+    doc.arrows.push({ id: doc.nextId++, from: a.id, to: b.id, depth: Math.min(26 + 12 * doc.arrows.length, 100), label: '', dash: false });
+  }
+  return miss;
+}
+let arrowMiss = 0;
+function applySource(text, force, arrowSpec) {
   let roots;
   try { roots = parseTree(text); } catch (e) {
     if (!(e instanceof ParseError)) throw e;
@@ -773,7 +790,7 @@ function applySource(text, force) {
   doc.roots = roots; autoPlace(); doc.roots = old;
   errEl.className = 'ok'; errEl.textContent = 'Drawn.';
   if (!force && JSON.stringify(roots) === JSON.stringify(old)) return true;
-  edit(() => { doc.roots = roots; if (force) { doc.arrows = []; sel = null; } }, 'src');
+  edit(() => { doc.roots = roots; if (force) { doc.arrows = []; sel = null; } arrowMiss = arrowSpec ? placeArrows(arrowSpec) : 0; }, 'src');
   const pb = pageBox(), W = stage.clientWidth, H = stage.clientHeight;
   const x0 = view.x + pb.x * view.k, y0 = view.y + pb.y * view.k;
   if (force || x0 < 0 || y0 < 0 || x0 + pb.w * view.k > W || y0 + pb.h * view.k > H) fit();
@@ -823,7 +840,12 @@ async function readPhoto(file) {
     if (!ui.text && !isNarrow()) { ui.text = true; applyUI(); save(); }   // on a phone the text box is a popup: leave the tree in view
     srcEl.value = d.tree;
     fmt = 'bracket'; refreshUI();
-    if (applySource(d.tree, true)) { syncSource(); toast('Drawn from your photo. Check the labels. Undo brings back the old tree.'); }
+    if (applySource(d.tree, true, d.arrows)) {
+      syncSource();
+      const n = (d.arrows || []).length - arrowMiss;
+      toast('Drawn from your photo' + (n ? ' with ' + n + (n === 1 ? ' arrow' : ' arrows') : '') + '. Check it carefully.'
+        + (arrowMiss ? ' ' + arrowMiss + ' arrow(s) could not be placed: drag the green dot to add them.' : ''));
+    }
     else toast('Read it, but the brackets need fixing in the text box');
   } catch (e) { toast('Could not read that photo'); }
   finally { photoBusy = false; btns.forEach((b, i) => { b.disabled = false; b.textContent = was[i]; }); }
@@ -831,8 +853,20 @@ async function readPhoto(file) {
 if (PHOTO_ENDPOINT) {
   $('photo-row').hidden = false;
   $('btn-photo-top').hidden = false;
-  for (const id of ['btn-photo', 'btn-photo-top']) $(id).addEventListener('click', () => $('photo-file').click());
-  $('photo-file').addEventListener('change', e => { readPhoto(e.target.files[0]); e.target.value = ''; });
+  const menu = $('photo-menu'), touchy = () => window.matchMedia('(pointer: coarse)').matches;
+  const closeMenu = () => { menu.hidden = true; };
+  for (const id of ['btn-photo', 'btn-photo-top']) $(id).addEventListener('click', e => {
+    if (!touchy()) { $('photo-file').click(); return; }           // a phone or tablet: offer the camera as well as the library
+    e.stopPropagation();
+    const r = e.currentTarget.getBoundingClientRect(), h = $('bar').getBoundingClientRect();
+    menu.hidden = !menu.hidden;
+    menu.style.left = Math.max(6, Math.min(r.left - h.left, h.width - 230)) + 'px';
+    menu.style.top = (r.bottom - h.top + 6) + 'px';
+  });
+  $('pm-cam').addEventListener('click', () => { closeMenu(); $('photo-cam').click(); });
+  $('pm-lib').addEventListener('click', () => { closeMenu(); $('photo-file').click(); });
+  document.addEventListener('click', e => { if (!menu.hidden && !menu.contains(e.target)) closeMenu(); });
+  for (const id of ['photo-file', 'photo-cam']) $(id).addEventListener('change', e => { readPhoto(e.target.files[0]); e.target.value = ''; });
   stage.addEventListener('dragover', e => { if ([...(e.dataTransfer?.types || [])].includes('Files')) e.preventDefault(); });
   stage.addEventListener('drop', e => { const f = e.dataTransfer?.files?.[0]; if (f && /^image\//.test(f.type)) { e.preventDefault(); readPhoto(f); } });
   document.addEventListener('paste', e => { const f = [...(e.clipboardData?.files || [])].find(x => /^image\//.test(x.type)); if (f) { e.preventDefault(); readPhoto(f); } });
