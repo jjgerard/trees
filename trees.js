@@ -813,7 +813,7 @@ let photoBusy = false;
 async function readPhoto(file) {
   if (photoBusy || !file || !/^image\//.test(file.type)) return;
   photoBusy = true;
-  const btn = $('btn-photo'); btn.disabled = true; btn.textContent = 'Reading…';
+  const btns = [$('btn-photo'), $('btn-photo-top')]; btns.forEach(b => { b.disabled = true; b.textContent = 'Reading…'; });
   try {
     const image = await photoToJpeg(file);
     const r = await fetch(PHOTO_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -826,11 +826,12 @@ async function readPhoto(file) {
     if (applySource(d.tree, true)) { syncSource(); toast('Drawn from your photo. Check the labels. Undo brings back the old tree.'); }
     else toast('Read it, but the brackets need fixing in the text box');
   } catch (e) { toast('Could not read that photo'); }
-  finally { photoBusy = false; btn.disabled = false; btn.textContent = '📷 From a photo'; }
+  finally { photoBusy = false; btns.forEach(b => { b.disabled = false; b.textContent = '📷 From a photo'; }); }
 }
 if (PHOTO_ENDPOINT) {
   $('photo-row').hidden = false;
-  $('btn-photo').addEventListener('click', () => $('photo-file').click());
+  $('btn-photo-top').hidden = false;
+  for (const id of ['btn-photo', 'btn-photo-top']) $(id).addEventListener('click', () => $('photo-file').click());
   $('photo-file').addEventListener('change', e => { readPhoto(e.target.files[0]); e.target.value = ''; });
   stage.addEventListener('dragover', e => { if ([...(e.dataTransfer?.types || [])].includes('Files')) e.preventDefault(); });
   stage.addEventListener('drop', e => { const f = e.dataTransfer?.files?.[0]; if (f && /^image\//.test(f.type)) { e.preventDefault(); readPhoto(f); } });
