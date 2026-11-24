@@ -31,7 +31,8 @@ code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .92em; 
 .bar-row { display: contents; }
 #bar-1 .brand { order: 1; } #btn-undo { order: 2; } #btn-redo { order: 3; } #btn-newtree { order: 4; }
 #btn-photo-top { order: 5; } #btn-text { order: 6; } #bar-1 .spacer { order: 7; }
-#btn-export { order: 8; } #btn-help { order: 9; } #examples { order: 10; }
+#btn-export { order: 8; } #btn-help { order: 9; } #btn-about { order: 10; } #examples { order: 11; }
+a.tool { text-decoration: none; display: inline-block; }
 .close-pop { display: none; margin-left: auto; }
 #bar { position: relative; }
 #photo-menu { position: absolute; z-index: 30; display: flex; flex-direction: column; background: #fff; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 6px 24px rgba(0,0,0,.25); overflow: hidden; }
@@ -209,6 +210,7 @@ kbd { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; ba
   #bar { padding: 6px 10px; gap: 6px; }
   .bar-row { display: flex; align-items: center; gap: 6px; width: 100%; }
   #bar .wide { display: none; }
+  #btn-about { display: none; }                  /* on a phone About is reached from Help */
   #bar .brand { margin-right: 2px; font-size: 15px; }
   .tool.mini { padding: 2px 8px; font-size: 14px; line-height: 1.25; }
   .tool { padding: 5px 10px; }

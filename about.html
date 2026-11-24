@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About · Tree studio</title>
+<link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+<link rel="icon" href="icon-32.png?v=2" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icon-180.png?v=2">
+<meta name="theme-color" content="#4b2340">
+<style>
+  :root { --ink: #2b2433; --muted: #6b6475; --panel: #f6f4ef; --line: #d8d3c7; --accent: #4b2340; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ink); background: var(--panel); }
+  header { background: var(--accent); color: #fff; padding: 10px 18px; display: flex; align-items: center; gap: 14px; }
+  header .brand { font-weight: 700; }
+  header .spacer { flex: 1; }
+  header a.open { background: #fff; color: var(--accent); font-weight: 600; font-size: 14px; text-decoration: none; padding: 6px 14px; border-radius: 8px; }
+  main { max-width: 680px; margin: 0 auto; padding: 22px 18px 60px; }
+  h1 { font-size: 28px; margin: 8px 0 4px; }
+  .lede { color: var(--muted); margin: 0 0 18px; font-size: 18px; }
+  h2 { font-size: 18px; margin: 28px 0 4px; }
+  p, ul { margin: 8px 0; }
+  ul { padding-left: 22px; }
+  li { margin: 4px 0; }
+  a { color: var(--accent); }
+  code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .92em; background: #efece4; padding: 0 4px; border-radius: 3px; }
+  .note { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin: 12px 0; }
+  footer { color: var(--muted); font-size: 14px; margin-top: 34px; }
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">Tree studio</span>
+  <span class="spacer"></span>
+  <a class="open" href="./">Open the studio</a>
+</header>
+<main>
+  <h1>About Tree studio</h1>
+  <p class="lede">A drawing tool for publication-quality syntax trees, for people who already know how trees work.</p>
+
+  <p>Build a tree by dragging pieces onto the page, paste one in as a labelled bracketing or LaTeX, or photograph one you drew by hand.
+  Then adjust it, add movement arrows and triangles, and export it as SVG, PNG, PDF or TikZ that compiles to exactly what you see.</p>
+
+  <h2>What you can do</h2>
+  <ul>
+    <li><b>Draw</b> with parts such as XP, X′, X⁰, triangles, words and category labels, or with the keyboard.</li>
+    <li><b>Paste</b> brackets (<code>[S [NP [N Pat]] [VP [V sleeps]]]</code>), qtree, forest or TikZ-style LaTeX, and copy the tree back out in any of them.</li>
+    <li><b>Photograph</b> a hand-drawn tree, including movement arrows, and get an editable tree back.</li>
+    <li><b>Export</b> SVG, PNG (150–600 dpi), PDF, TikZ, or a <code>.json</code> file that reopens the tree later.</li>
+  </ul>
+
+  <h2>Photos: what happens to them</h2>
+  <p>Reading a photo needs an AI model, which can’t run inside this page. When you use <b>📷 Photo</b>:</p>
+  <ul>
+    <li>Your browser shrinks the photo and sends it to a small service that passes it on to an AI model (Claude, from Anthropic).</li>
+    <li>The model replies with the tree as text, and the page draws it. Nothing else is sent.</li>
+    <li>This site does not keep the photo or the text, and has no accounts. The services it passes through handle the photo under their own policies, so don’t upload anything private.</li>
+    <li>Photos are only sent when you choose one. Everything else in Tree studio stays on your device.</li>
+  </ul>
+  <div class="note"><b>Check the result.</b> Handwriting gets misread and arrows can be missed or attached to the wrong node. Treat the result as a first draft and fix it with the usual editing tools. Undo brings back what was there before.</div>
+
+  <h2>Your work and your data</h2>
+  <ul>
+    <li>No sign-in. Your tree is saved in this browser only, and nothing is uploaded unless you use the photo feature.</li>
+    <li>Clearing your browser’s site data removes the saved tree, so export a <code>.json</code> file of anything you want to keep.</li>
+    <li>PNG and PDF are made on your own computer. SVG text stays as text, so it looks right only where the fonts you chose are installed.</li>
+  </ul>
+
+  <h2>Open source</h2>
+  <p>Tree studio is free and open source under the MIT licence. There is no build step: the page is plain HTML, CSS and JavaScript.
+  The code, and a place to report problems or suggest changes, is at <a href="https://github.com/jjgerard/trees">github.com/jjgerard/trees</a>.</p>
+
+  <footer><a href="./">← Back to the studio</a></footer>
+</main>
+</body>
+</html>
