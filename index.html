@@ -28,6 +28,10 @@
         <option value="">Examples…</option>
       </select>
     </div>
+    <div id="photo-menu" hidden>
+      <button id="pm-cam">📷 Take a photo</button>
+      <button id="pm-lib">🖼 Choose from library</button>
+    </div>
   </header>
 
   <div id="main">
@@ -71,6 +75,7 @@
         <div class="row" id="photo-row" hidden>
           <button class="small" id="btn-photo" title="Take or upload a photo of a hand-drawn tree and turn it into a tree here">📷 From a photo</button>
           <input type="file" id="photo-file" accept="image/*" hidden>
+          <input type="file" id="photo-cam" accept="image/*" capture="environment" hidden>
           <small id="photo-note">Sent to an AI reader, not stored. Check the result: handwriting gets misread.</small>
         </div>
         <textarea id="src" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"

@@ -15,10 +15,18 @@ Format:
 - A label or word with a space in it goes in braces: {the dog}.
 - A triangle over a phrase means the words under it are not analysed further: write \\roof as the first thing after the label, then the words: [NP \\roof the mat].
 - A crossed-out item (e.g. a trace or deleted copy) is written \\sout{t}.
-- Ignore movement arrows and any text outside the tree.
+- Movement arrows (curved lines with an arrowhead, from a trace or lower position up to where the item moved to) are NOT written in the brackets. List each one on its own line AFTER the tree: @arrow FROM -> TO
+  FROM is where the arrow starts (the tail, usually the trace), TO is the node it points to (the arrowhead). Name each end exactly as written in your brackets: a category label or a word, e.g. t_i or DP_i.
+  If that exact text appears more than once, add #n for which occurrence it is, counting left to right through your brackets: @arrow t#2 -> NP#1
+  Only list arrows you can actually see. Ignore any other text outside the tree.
 - If a label is illegible, write your best guess followed by ?.
 
-Example: [S [NP [Det the] [N cat]] [VP [V sat] [PP [P on] [NP \\roof the mat]]]]
+Example without arrows: [S [NP [Det the] [N cat]] [VP [V sat] [PP [P on] [NP \\roof the mat]]]]
+
+Example with arrows:
+[CP [DP_i what] [C' [C did_j] [TP [DP John] [T' [T t_j] [VP [V buy] [DP t_i]]]]]]
+@arrow t_j -> did_j
+@arrow t_i -> DP_i
 
 If the image does not contain a syntax tree, reply exactly: NOTREE`;
 
@@ -73,7 +81,14 @@ export default {
     const data = await r.json();
     let text = ((data.content || []).find(c => c.type === 'text') || {}).text || '';
     text = text.trim().replace(/^```[a-z]*\n?|\n?```$/g, '').trim();
+    // "@arrow FROM -> TO" lines are pulled out of the bracketing and returned separately
+    const arrows = [], keep = [];
+    for (const ln of text.split('\n')) {
+      const m = ln.match(/^\s*@arrow\s+(.+?)\s*->\s*(.+?)\s*$/);
+      if (m) { if (arrows.length < 12) arrows.push([m[1], m[2]]); } else keep.push(ln);
+    }
+    text = keep.join('\n').trim();
     if (text === 'NOTREE' || !text.startsWith('[')) return json({ error: 'No tree found in that photo. Try a clearer, well-lit shot.' }, 422);
-    return json({ tree: text });
+    return json({ tree: text, arrows });
   },
 };
