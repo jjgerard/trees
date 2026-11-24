@@ -813,20 +813,20 @@ let photoBusy = false;
 async function readPhoto(file) {
   if (photoBusy || !file || !/^image\//.test(file.type)) return;
   photoBusy = true;
-  const btns = [$('btn-photo'), $('btn-photo-top')]; btns.forEach(b => { b.disabled = true; b.textContent = 'Reading…'; });
+  const btns = [$('btn-photo'), $('btn-photo-top')], was = btns.map(b => b.textContent); btns.forEach(b => { b.disabled = true; b.textContent = 'Reading…'; });
   try {
     const image = await photoToJpeg(file);
     const r = await fetch(PHOTO_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ image, media_type: 'image/jpeg' }) });
     const d = await r.json().catch(() => ({}));
     if (!r.ok || !d.tree) { toast(d.error || 'Could not read that photo'); return; }
-    if (!ui.text) { ui.text = true; applyUI(); save(); }
+    if (!ui.text && !isNarrow()) { ui.text = true; applyUI(); save(); }   // on a phone the text box is a popup: leave the tree in view
     srcEl.value = d.tree;
     fmt = 'bracket'; refreshUI();
     if (applySource(d.tree, true)) { syncSource(); toast('Drawn from your photo. Check the labels. Undo brings back the old tree.'); }
     else toast('Read it, but the brackets need fixing in the text box');
   } catch (e) { toast('Could not read that photo'); }
-  finally { photoBusy = false; btns.forEach(b => { b.disabled = false; b.textContent = '📷 From a photo'; }); }
+  finally { photoBusy = false; btns.forEach((b, i) => { b.disabled = false; b.textContent = was[i]; }); }
 }
 if (PHOTO_ENDPOINT) {
   $('photo-row').hidden = false;
@@ -1484,6 +1484,7 @@ $('parts').addEventListener('pointerup', e => endPaletteDrag(e, false));
 $('parts').addEventListener('pointercancel', e => endPaletteDrag(e, true));
 
 // ------------------------------------------------------------------ mode switch and the text pane
+const isNarrow = () => window.matchMedia('(max-width: 900px)').matches;
 function applyUI() {
   for (const b of $('seg-mode').querySelectorAll('button')) b.classList.toggle('on', b.dataset.mode === ui.mode);
   $('left').hidden = !ui.text;
@@ -1500,6 +1501,7 @@ $('btn-text').addEventListener('click', () => {
   applyView(); placeEditor();
   if (ui.text) syncSource();
 });
+$('btn-text-close').addEventListener('click', () => $('btn-text').click());
 $('nb-arrow').addEventListener('click', withNode(opArrowStart));
 $('nb-del').addEventListener('click', withNode(id => opDelete(id, true)));
 $('nb-keep').addEventListener('click', withNode(id => opDelete(id, false)));
@@ -1603,6 +1605,7 @@ function start() {
     doc = normDoc(saved.doc);
     fmt = saved.fmt || 'bracket';
     if (saved.ui) ui = Object.assign(ui, saved.ui);
+    if (isNarrow()) ui.text = false;                   // a popup should not greet you on load
   } else {
     doc = { nextId: 1, roots: [], arrows: [], opts: DEFAULT_OPTS() };      // a blank page
   }

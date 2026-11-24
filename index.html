@@ -12,18 +12,22 @@
 <div id="app">
 
   <header id="bar">
-    <span class="brand">Tree studio</span>
-    <button class="tool" id="btn-undo" title="Undo (Ctrl+Z)">↶ Undo</button>
-    <button class="tool" id="btn-redo" title="Redo (Ctrl+Shift+Z)">↷ Redo</button>
-    <button class="tool" id="btn-newtree" title="Clear the page and start again">New</button>
-    <button class="tool" id="btn-text" aria-pressed="false" title="Show or hide the text box: paste or copy brackets / LaTeX">{ } LaTeX / text</button>
-    <button class="tool" id="btn-photo-top" hidden title="Take or upload a photo of a hand-drawn tree and turn it into a tree here">📷 From a photo</button>
-    <span class="spacer"></span>
-    <button class="tool strong" id="btn-export">Export…</button>
-    <button class="tool" id="btn-help">Help</button>
-    <select class="tool" id="examples" title="Load an example tree">
-      <option value="">Examples…</option>
-    </select>
+    <div class="bar-row" id="bar-1">
+      <span class="brand">Tree studio</span>
+      <button class="tool mini" id="btn-undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶<span class="wide"> Undo</span></button>
+      <button class="tool mini" id="btn-redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷<span class="wide"> Redo</span></button>
+      <button class="tool mini" id="btn-newtree" title="Clear the page and start again">New</button>
+      <span class="spacer"></span>
+      <button class="tool strong" id="btn-export">Export…</button>
+      <button class="tool" id="btn-help">Help</button>
+    </div>
+    <div class="bar-row" id="bar-2">
+      <button class="tool" id="btn-photo-top" hidden title="Take or upload a photo of a hand-drawn tree and turn it into a tree here">📷 Photo</button>
+      <button class="tool" id="btn-text" aria-pressed="false" title="Show or hide the text box: paste or copy brackets / LaTeX">{ }<span class="wide"> LaTeX /</span> text</button>
+      <select class="tool" id="examples" title="Load an example tree">
+        <option value="">Examples…</option>
+      </select>
+    </div>
   </header>
 
   <div id="main">
@@ -56,7 +60,7 @@
 
     <!-- ===== left: the tree as text (toggled from the top bar) ===== -->
     <aside id="left" hidden>
-      <div class="head">Tree as text <small>type or paste, the tree follows</small></div>
+      <div class="head">Tree as text <small>type or paste, the tree follows</small><button class="small close-pop" id="btn-text-close">Done</button></div>
       <div class="pad">
         <div class="row">
           <span class="seg" id="seg-fmt" title="How the tree is written in the box below. Brackets, qtree and forest can be pasted in. forest and TikZ carry movement arrows; TikZ also keeps every position exactly (output only).">

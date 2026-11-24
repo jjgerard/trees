@@ -27,6 +27,12 @@ code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .92em; 
 #bar a { color: #e9dff0; text-decoration: none; font-size: 13px; }
 #bar a:hover { text-decoration: underline; }
 #bar .spacer { flex: 1; }
+/* the two bar rows share one line on wide screens (display: contents), and are real rows on phones */
+.bar-row { display: contents; }
+#bar-1 .brand { order: 1; } #btn-undo { order: 2; } #btn-redo { order: 3; } #btn-newtree { order: 4; }
+#btn-photo-top { order: 5; } #btn-text { order: 6; } #bar-1 .spacer { order: 7; }
+#btn-export { order: 8; } #btn-help { order: 9; } #examples { order: 10; }
+.close-pop { display: none; margin-left: auto; }
 .tool {
   background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.4); border-radius: 8px;
   padding: 5px 11px; font-size: 13px; cursor: pointer;
@@ -182,6 +188,27 @@ kbd { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; ba
   #stage { height: 62vh; order: -1; flex: none; }
   #parts, #left, #right { border: 0; border-top: 1px solid var(--line); width: auto; }
   #src { min-height: 150px; }
+
+  /* the text box becomes a popup (a sheet over the drawing) */
+  #left, #left[hidden] { display: none; }
+  #left:not([hidden]) { display: flex; position: fixed; inset: 0; z-index: 40; border: 0; background: var(--panel); }
+  #left .head { padding-top: 14px; }
+  #left .close-pop { display: inline-block; padding: 7px 16px; background: var(--accent); color: #fff; border-color: var(--accent); font-size: 14px; }
+  #left .pad { overflow-y: auto; }
+  #src { flex: none; height: 38vh; min-height: 160px; font-size: 16px; }   /* 16px stops iOS zooming in on focus */
+  #photo-row { display: none !important; }
+}
+
+/* ---- phones: the top bar becomes two tidy rows ---- */
+@media (max-width: 700px) {
+  #bar { padding: 6px 10px; gap: 6px; }
+  .bar-row { display: flex; align-items: center; gap: 6px; width: 100%; }
+  #bar .wide { display: none; }
+  #bar .brand { margin-right: 2px; font-size: 15px; }
+  .tool.mini { padding: 2px 8px; font-size: 14px; line-height: 1.25; }
+  .tool { padding: 5px 10px; }
+  #bar-2 #examples { margin-left: auto; max-width: 42vw; }
+  #bar-2 .tool { font-size: 13px; }
 }
 
 /* ---- print: just the tree ---- */
