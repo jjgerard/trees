@@ -2,6 +2,7 @@
 
 A drawing tool for publication-quality syntax trees, for people who already know how trees work.
 It runs in the browser, needs no account or install, stores nothing on a server, and has no build step.
+The one exception is the optional **From a photo** button: the photo is sent through a small proxy to an AI model that reads it, and is not kept.
 
 **Use it:** https://jjgerard.github.io/trees/
 
@@ -21,6 +22,9 @@ It runs in the browser, needs no account or install, stores nothing on a server,
 Labels take `_i`, `^0`, `V'` → V′, `\emph{}`, `\textbf{}`, `\sout{}` and Greek such as `\phi`.
 Fonts, sizes, bold/italic and colour are set separately for labels and for words, and any node can override them.
 Line width, spacing and arrow styling are adjustable.
+
+- **Or photograph it.** **📷 From a photo** (in the text panel; you can also drop or paste an image) turns a picture of a
+  hand-drawn tree into a bracketing. Handwriting gets misread, so check the labels. Undo brings back what was there.
 
 ## Keyboard
 
