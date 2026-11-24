@@ -63,6 +63,11 @@
           </span>
           <button class="small" id="btn-copy" title="Copy the text">Copy</button>
         </div>
+        <div class="row" id="photo-row" hidden>
+          <button class="small" id="btn-photo" title="Take or upload a photo of a hand-drawn tree and turn it into a tree here">📷 From a photo</button>
+          <input type="file" id="photo-file" accept="image/*" hidden>
+          <small id="photo-note">Sent to an AI reader, not stored. Check the result: handwriting gets misread.</small>
+        </div>
         <textarea id="src" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"
           placeholder="Paste a labelled bracketing, e.g.&#10;[S [NP [N Pat]] [VP [V sleeps]]]&#10;&#10;or LaTeX, e.g.&#10;\Tree [.S [.NP [.N Pat ] ] [.VP [.V sleeps ] ] ]"></textarea>
         <div id="err" role="status"></div>

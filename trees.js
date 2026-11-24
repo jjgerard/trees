@@ -796,6 +796,47 @@ $('seg-fmt').addEventListener('click', e => {
   save(); refreshUI(); srcEl.blur(); syncSource();
 });
 
+// ------------------------------------------------------------------ photo -> tree
+// URL of the deployed worker (see worker/README.md). Leave empty and the photo button stays hidden.
+const PHOTO_ENDPOINT = '';
+async function photoToJpeg(file) {                 // shrink to <=1600px so uploads are small and fast
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas');
+  c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  const g = c.getContext('2d');
+  g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+  g.drawImage(bmp, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.85).split(',')[1];
+}
+let photoBusy = false;
+async function readPhoto(file) {
+  if (photoBusy || !file || !/^image\//.test(file.type)) return;
+  photoBusy = true;
+  const btn = $('btn-photo'); btn.disabled = true; btn.textContent = 'Reading…';
+  try {
+    const image = await photoToJpeg(file);
+    const r = await fetch(PHOTO_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image, media_type: 'image/jpeg' }) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || !d.tree) { toast(d.error || 'Could not read that photo'); return; }
+    if (!ui.text) { ui.text = true; applyUI(); save(); }
+    srcEl.value = d.tree;
+    fmt = 'bracket'; refreshUI();
+    if (applySource(d.tree, true)) { syncSource(); toast('Drawn from your photo. Check the labels. Undo brings back the old tree.'); }
+    else toast('Read it, but the brackets need fixing in the text box');
+  } catch (e) { toast('Could not read that photo'); }
+  finally { photoBusy = false; btn.disabled = false; btn.textContent = '📷 From a photo'; }
+}
+if (PHOTO_ENDPOINT) {
+  $('photo-row').hidden = false;
+  $('btn-photo').addEventListener('click', () => $('photo-file').click());
+  $('photo-file').addEventListener('change', e => { readPhoto(e.target.files[0]); e.target.value = ''; });
+  stage.addEventListener('dragover', e => { if ([...(e.dataTransfer?.types || [])].includes('Files')) e.preventDefault(); });
+  stage.addEventListener('drop', e => { const f = e.dataTransfer?.files?.[0]; if (f && /^image\//.test(f.type)) { e.preventDefault(); readPhoto(f); } });
+  document.addEventListener('paste', e => { const f = [...(e.clipboardData?.files || [])].find(x => /^image\//.test(x.type)); if (f) { e.preventDefault(); readPhoto(f); } });
+}
+
 // ------------------------------------------------------------------ inline retyping
 let editing = null;       // { id, virt }
 function placeEditor() {

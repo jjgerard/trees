@@ -1,0 +1,14 @@
+name = "trees-photo"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://jjgerard.github.io"
+MODEL = "claude-sonnet-5-5"
+
+# 10 photos per minute per visitor
+[[unsafe.bindings]]
+name = "LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 10, period = 60 }
