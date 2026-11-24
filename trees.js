@@ -798,7 +798,7 @@ $('seg-fmt').addEventListener('click', e => {
 
 // ------------------------------------------------------------------ photo -> tree
 // URL of the deployed worker (see worker/README.md). Leave empty and the photo button stays hidden.
-const PHOTO_ENDPOINT = '';
+const PHOTO_ENDPOINT = 'https://trees-photo.tree-studio.workers.dev';
 async function photoToJpeg(file) {                 // shrink to <=1600px so uploads are small and fast
   const bmp = await createImageBitmap(file);
   const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
