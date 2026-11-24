@@ -759,10 +759,13 @@ function syncSource() {
 const preOrder = () => { const out = []; const w = n => { out.push(n); n.children.forEach(w); }; doc.roots.forEach(w); return out; };
 function placeArrows(spec) {                         // [['t_i','DP_i'], ['NP#2','NP#1']] -> arrows on the page; returns how many could not be placed
   const nodes = preOrder();
+  const norm = x => String(x).toLowerCase().replace(/[\s{}]/g, '').replace(/[′’]/g, "'");   // t_{i} = t_i, NP = np, V′ = V'
   const end = txt => {
     const m = /^(.*?)(?:#(\d+))?$/.exec(String(txt).trim());
-    const hits = nodes.filter(n => n.label === m[1].trim());
-    return hits[(m[2] ? +m[2] : 1) - 1] || null;
+    const lab = m[1].trim(), k = (m[2] ? +m[2] : 1) - 1;
+    let hits = nodes.filter(n => n.label === lab);
+    if (!hits[k]) hits = nodes.filter(n => norm(n.label) === norm(lab));
+    return hits[k] || null;
   };
   let miss = 0;
   for (const [f, t] of spec || []) {
@@ -844,7 +847,9 @@ async function readPhoto(file) {
       syncSource();
       const n = (d.arrows || []).length - arrowMiss;
       toast('Drawn from your photo' + (n ? ' with ' + n + (n === 1 ? ' arrow' : ' arrows') : '') + '. Check it carefully.'
-        + (arrowMiss ? ' ' + arrowMiss + ' arrow(s) could not be placed: drag the green dot to add them.' : ''));
+        + (d.arrows === undefined ? ' (Arrows are off: the photo service needs updating.)'
+          : !d.arrows.length ? ' No arrows were found: drag the green dot on a node to add them.'
+          : arrowMiss ? ' ' + arrowMiss + ' arrow(s) could not be placed: drag the green dot to add them.' : ''));
     }
     else toast('Read it, but the brackets need fixing in the text box');
   } catch (e) { toast('Could not read that photo'); }

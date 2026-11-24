@@ -82,12 +82,9 @@ export default {
     let text = ((data.content || []).find(c => c.type === 'text') || {}).text || '';
     text = text.trim().replace(/^```[a-z]*\n?|\n?```$/g, '').trim();
     // "@arrow FROM -> TO" lines are pulled out of the bracketing and returned separately
-    const arrows = [], keep = [];
-    for (const ln of text.split('\n')) {
-      const m = ln.match(/^\s*@arrow\s+(.+?)\s*->\s*(.+?)\s*$/);
-      if (m) { if (arrows.length < 12) arrows.push([m[1], m[2]]); } else keep.push(ln);
-    }
-    text = keep.join('\n').trim();
+    const arrows = [];
+    text = text.replace(/@arrow\s+([^\n@]+?)\s*(?:->|→|=>)\s*([^\n@]+?)[ \t]*(?=@arrow|\n|$)/g, (_, f, t) => { if (arrows.length < 12) arrows.push([f.trim(), t.trim()]); return ''; });
+    text = text.trim();
     if (text === 'NOTREE' || !text.startsWith('[')) return json({ error: 'No tree found in that photo. Try a clearer, well-lit shot.' }, 422);
     return json({ tree: text, arrows });
   },
