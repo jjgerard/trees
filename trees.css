@@ -227,14 +227,17 @@ kbd { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; ba
 body.gloss-tab .tree-only, body.gloss-tab #photo-menu { display: none !important; }
 body:not(.gloss-tab) .gloss-only { display: none !important; }
 body.gloss-tab #main { display: none; }
+#g-text { order: 6; }
 #g-undo { order: 2; } #g-redo { order: 3; } #g-new { order: 4; }
 #g-photo { order: 5; } #g-examples { order: 11; }
 #g-export { order: 8; } #g-help { order: 9; }
 
-#gloss { display: none; min-height: 0; }
-body.gloss-tab #gloss { display: flex; }
-#g-left, #g-right { background: var(--panel); display: flex; flex-direction: column; min-height: 0; flex: none; }
+#g-page { display: none; min-height: 0; }
+body.gloss-tab #g-page { display: flex; }
+#g-left, #g-right, #g-latex { background: var(--panel); display: flex; flex-direction: column; min-height: 0; flex: none; }
 #g-left { width: 330px; border-right: 1px solid var(--line); }
+#g-latex { width: 330px; border-right: 1px solid var(--line); }
+#g-latex[hidden] { display: none; }
 #g-right { width: 340px; border-left: 1px solid var(--line); }
 #g-stage { flex: 1; min-width: 0; min-height: 0; position: relative; background: var(--board); overflow: auto; }
 #g-paper { margin: 22px auto; width: max-content; max-width: none; background: #fff; box-shadow: 0 1px 8px rgba(0,0,0,.18); }
@@ -255,24 +258,45 @@ body.gloss-tab #gloss { display: flex; }
 .gex .warn { font-size: 12px; color: var(--bad); line-height: 1.35; }
 .gex .warn:empty { display: none; }
 #g-out {
-  width: 100%; height: 230px; resize: vertical; padding: 8px 9px; border: 1px solid var(--line); border-radius: 8px; margin-top: 6px;
-  background: #fff; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.45; white-space: pre; overflow: auto; tab-size: 2;
+  width: 100%; flex: 1; min-height: 220px; resize: none; padding: 8px 9px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.45; white-space: pre; overflow: auto; tab-size: 2;
 }
 #g-out:focus { outline: 2px solid #b79ac6; }
 #g-err { min-height: 16px; font-size: 12px; color: var(--bad); line-height: 1.35; margin-top: 3px; }
 #g-err.ok { color: var(--muted); }
 #g-photo-note[hidden] { display: none; }
+@media (max-width: 1100px) {
+  .bar-row { display: flex; align-items: center; gap: 6px 10px; width: 100%; }
+  #bar-2 #examples, #bar-2 #g-examples { margin-left: auto; }
+}
+#bar .q { display: none; }
+#g-text.on { background: #fff; color: var(--accent); }
 @media (max-width: 900px) {
-  body.gloss-tab #gloss { flex-direction: column; }
+  body.gloss-tab #g-page { flex-direction: column; }
   #g-stage { order: -1; flex: none; height: 46vh; }
   #g-left, #g-right { border: 0; border-top: 1px solid var(--line); width: auto; }
+  /* the LaTeX box becomes a popup sheet, as on the Trees tab */
+  #g-latex:not([hidden]) { display: flex; position: fixed; inset: 0; z-index: 40; border: 0; width: auto; }
+  #g-latex .head { padding-top: 14px; }
+  #g-latex .close-pop { display: inline-block; padding: 7px 16px; background: var(--accent); color: #fff; border-color: var(--accent); font-size: 14px; }
+  #g-out { flex: none; height: 38vh; font-size: 16px; }
 }
 @media (max-width: 700px) {
   #bar .brand { display: none; }                   /* the tabs say it already, and the row is tight */
-  .bar-row { flex-wrap: wrap; }
+  .bar-row { flex-wrap: nowrap; gap: 5px; }
   #seg-tab { flex: none; }
-  #seg-tab button { padding: 3px 9px; }
-  #bar-2 #g-examples { margin-left: auto; max-width: 42vw; }
+  #seg-tab button { padding: 3px 8px; font-size: 12.5px; }
+  #bar .q { display: inline; font-weight: 700; }
+  #bar-1 .tool.strong { padding: 5px 9px; }
+  #bar-2 .tool { white-space: nowrap; }
+  #bar-2 #g-examples { max-width: 38vw; }
+}
+
+@media (max-width: 400px) {
+  #bar { padding: 6px 7px; }
+  .bar-row { gap: 4px; }
+  .tool.mini { padding: 2px 6px; }
+  #bar-1 .tool.strong { padding: 5px 7px; }
+  #seg-tab button { padding: 3px 6px; }
 }
 
 /* ---- print: just the tree ---- */

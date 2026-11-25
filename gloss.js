@@ -414,6 +414,21 @@ $('g-out').addEventListener('input', () => {
   err.className = 'ok'; err.textContent = `Read ${ex.length} example${ex.length === 1 ? '' : 's'}.`;
 });
 $('g-out').addEventListener('blur', syncOut);
+// the LaTeX box is shown or hidden from the bar, as the text box is on the Trees tab
+const UI_STORE = 'trees-studio-gloss-ui';
+let ui = { latex: false };
+try { Object.assign(ui, JSON.parse(localStorage.getItem(UI_STORE)) || {}); } catch (e) { /* ignore */ }
+if (window.matchMedia('(max-width: 900px)').matches) ui.latex = false;      // a popup should not greet you on load
+function applyUI() {
+  $('g-latex').hidden = !ui.latex;
+  $('g-text').classList.toggle('on', ui.latex);
+  $('g-text').setAttribute('aria-pressed', ui.latex ? 'true' : 'false');
+  try { localStorage.setItem(UI_STORE, JSON.stringify(ui)); } catch (e) { /* full or blocked */ }
+  if (ui.latex) syncOut();
+  renderPreview();
+}
+$('g-text').addEventListener('click', () => { ui.latex = !ui.latex; applyUI(); });
+$('g-text-close').addEventListener('click', () => $('g-text').click());
 $('g-pkg').addEventListener('change', () => { G.pkg = $('g-pkg').value; syncOut(); save(); });
 $('g-copy').addEventListener('click', async () => {
   const v = snippet(G.pkg);
@@ -440,7 +455,7 @@ for (const el of document.querySelectorAll('[data-g]')) {
   });
 }
 
-function renderAll() { renderList(); refreshOpts(); renderPreview(); syncOut(); refreshUndo(); }
+function renderAll() { renderList(); refreshOpts(); applyUI(); refreshUndo(); }
 
 // ------------------------------------------------------------------ examples, new, photo
 for (const k of Object.keys(SAMPLES)) { const o = document.createElement('option'); o.textContent = k; $('g-examples').appendChild(o); }
