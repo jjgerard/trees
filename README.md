@@ -1,7 +1,6 @@
 # Tree studio
 
-A drawing tool for publication-quality syntax trees, for people who already know how trees work.
-It runs in the browser, needs no account or install, stores nothing on a server, and has no build step.
+A drawing tool for publication-quality syntax trees. It runs in the browser, needs no account or install, stores nothing on a server, and has no build step.
 The one exception is the optional **From a photo** button: the photo is sent through a small proxy to an AI model that reads it, and is not kept.
 
 **Use it:** https://jjgerard.github.io/trees/
