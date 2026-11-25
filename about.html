@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About · Tree studio</title>
+<link rel="stylesheet" href="about.css">
+<link rel="icon" href="icon-32.png" sizes="32x32" type="image/png">
+<meta name="theme-color" content="#4b2340">
+</head>
+<body>
+<header>
+  <a class="brand" href="index.html">Tree studio</a>
+  <span class="spacer"></span>
+  <a class="open" href="index.html">Open the studio →</a>
+</header>
+
+<main>
+  <h1>About the tree studio</h1>
+  <p class="lede">A free drawing tool for syntax trees that are ready to publish, for people who already know how trees work.</p>
+
+  <h2>What it is for</h2>
+  <p>Making the tree figures that go into papers, handouts, slides and theses, without compiling anything to see what you got.
+  You can build a tree by dragging pieces, or paste one in as labelled brackets or LaTeX and have it drawn, and then adjust it
+  by hand until it looks the way you want. It does not check your analysis: nothing stops you joining any piece to any other.</p>
+
+  <h2>What it can do</h2>
+  <ul>
+    <li><b>Build by dragging.</b> XP, X′, X⁰, triangle phrases, words, labels and a row of category chips (X, C, T, v, V, D, N, P, A, Adv, or any you type).
+    Pieces join when dropped just under another, pull off when dragged away, and a category chip dropped on a node renames it.</li>
+    <li><b>Paste or copy text.</b> Labelled brackets, LaTeX <code>qtree</code>, <code>forest</code> and TikZ, with the text following whatever you do on the drawing.</li>
+    <li><b>Movement arrows</b> drawn by dragging from the trace to where it moved, plus triangles, crossed-out text, traces, and several trees on one page.</li>
+    <li><b>Typography.</b> Font, size, bold, italic and colour, separately for labels and for words, with overrides for any single node.
+    Labels take subscripts, superscripts, primes, italics and Greek (<code>NP_i</code>, <code>T^0</code>, <code>V'</code>, <code>\phi</code>).</li>
+    <li><b>Keyboard shortcuts</b> for building and editing without the mouse. Press <kbd>?</kbd> in the studio for the list.</li>
+  </ul>
+
+  <h2>Getting trees out</h2>
+  <ul>
+    <li><b>SVG, PNG and PDF</b>, drawn to real point sizes, so 12&nbsp;pt text is 12&nbsp;pt in the file. PNG can be 150, 300 or 600&nbsp;dpi.</li>
+    <li><b>TikZ</b>, as text or a standalone <code>.tex</code> file, with every position, triangle and arrow written out exactly.</li>
+    <li><b>forest</b> carries your arrows as <code>\draw</code> lines; <b>qtree</b> cannot carry arrows.</li>
+    <li><b>A saved file</b> (<code>.json</code>) that keeps positions, arrows and styles so you can reopen a tree later.</li>
+  </ul>
+  <div class="note">SVG text is saved as text in the fonts you picked, so it only looks right on a computer that has those fonts.
+  PNG and PDF are made on your own computer and are safe to send to anyone.</div>
+
+  <h2>Your work stays with you</h2>
+  <p>Trees are saved in your own browser so a refresh does not lose them. Nothing is uploaded: there is no account and no server that
+  receives your trees. Clearing your browser&rsquo;s site data removes the saved tree, so use <b>Export &rarr; Save this tree as a file</b>
+  for anything you want to keep.</p>
+
+  <h2>Open source</h2>
+  <p>The studio is a single static page with no build step and no dependencies, released under the MIT licence. The source is at
+  <a href="https://github.com/jjgerard/trees">github.com/jjgerard/trees</a>. You can download the repository and open <code>index.html</code>
+  to run it offline, or host it anywhere.</p>
+
+  <h2>Credits</h2>
+  <p>The drag-to-build approach is in the spirit of TreeForm, and the export formats are meant to slot into the LaTeX tools
+  syntacticians already use (<code>qtree</code>, <code>forest</code>, TikZ).</p>
+
+  <footer><a href="index.html">&larr; Back to the studio</a></footer>
+</main>
+</body>
+</html>
