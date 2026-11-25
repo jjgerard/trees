@@ -1,6 +1,6 @@
-# Photo → tree proxy
+# Photo → tree / gloss proxy
 
-Lets students turn a photo of a hand-drawn tree into a bracketing without needing their own API key.
+Lets students turn a photo of a hand-drawn tree into a bracketing, or a photo of glossed examples into text (the Glosses tab sends `mode: "gloss"`), without needing their own API key.
 The Worker holds the key, only answers requests from the site, rate-limits per visitor, and stores nothing.
 
 ## Deploy (about five minutes)
@@ -15,3 +15,5 @@ The Worker holds the key, only answers requests from the site, rate-limits per v
 - Set a monthly spend limit on the API key in the Anthropic console; that is the real backstop.
 - `ALLOWED_ORIGINS` (wrangler.toml) is the list of sites allowed to call it. Add a localhost origin while testing.
 - Photos pass through Cloudflare and the model provider and are not kept by this code. The app says so before sending.
+
+After changing `worker.js` run `wrangler deploy` again. Until you do, the tree photo reader keeps working but the Glosses tab says the photo service needs updating.

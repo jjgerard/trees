@@ -25,6 +25,19 @@ Line width, spacing and arrow styling are adjustable.
 - **Or photograph it.** **📷 From a photo** (in the text panel; you can also drop or paste an image) turns a picture of a
   hand-drawn tree into a bracketing. Handwriting gets misread, so check the labels. Undo brings back what was there.
 
+## Glosses (the second tab)
+
+The **Glosses** tab sets out interlinear glossed examples: each word of the example sits over its gloss, with the free translation under.
+
+- **Type it.** Three boxes per example (example, gloss, translation), words separated by spaces. Hyphens and dots stay inside a word;
+  `{two words}` gives one gloss item that contains a space. CAPITALS in the gloss (`3SG`, `PST`) become small caps. A different
+  number of words in the two lines is flagged in red.
+- **Several examples** can be numbered one each, or as one number with a. b. c., or left unnumbered.
+- **LaTeX in and out.** The LaTeX box writes **gb4e**, **linguex**, **expex** or a plain **tabular** (no package), and reads
+  `\gll … \\ … \\ \trans …` or `\gla … // \glb … //` pasted into it. Export gives SVG, PNG, PDF (via print), a compilable `.tex`, or a `.json` file.
+- **📷 Photo** reads glossed examples from a photo or a page of a book. Check every word: handwriting, special characters and the
+  word-by-word pairing can all be misread. It uses the same small proxy as the tree photo reader; redeploy `worker/` to turn it on.
+
 ## Keyboard
 
 Press **?** (or the **Keys** button) for the full list. The main ones: arrows walk the tree; **Tab** / **F1** add a
