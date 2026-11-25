@@ -32,6 +32,10 @@ if (TS && btn) {
   const build = () => {
     panel = el('div', { id: 'mark-demo', role: 'dialog', ariaLabel: 'Marking demo' }, document.body);
     el('button', { className: 'x', title: 'Close', ariaLabel: 'Close' }, panel, '×').onclick = () => { panel.hidden = true; TS.setMarks(null); };
+    const mn = el('button', { className: 'mn', title: 'Shrink or grow this box', ariaLabel: 'Shrink or grow' }, panel, '▾');
+    const setMin = on => { panel.classList.toggle('min', on); mn.textContent = on ? '▴' : '▾'; };
+    mn.onclick = () => setMin(!panel.classList.contains('min'));
+    const narrow = () => window.matchMedia('(max-width: 900px)').matches;
     el('h3', {}, panel, 'Marking demo');
     el('div', { className: 'sub' }, panel, 'Skill 1: heads and projection. Build the tree, then Check.');
     const sel = el('select', {}, panel);
@@ -40,7 +44,7 @@ if (TS && btn) {
     const row = el('div', { className: 'row' }, panel);
     const start = el('button', {}, row, 'Start: just the words');
     const flawed = el('button', {}, row, 'Load a flawed attempt');
-    const row2 = el('div', { className: 'row' }, panel);
+    const row2 = el('div', { className: 'row act' }, panel);
     const check = el('button', { className: 'go' }, row2, 'Check');
     const answer = el('button', {}, row2, 'Show a correct tree');
     const res = el('div', { className: 'res' }, panel);
@@ -48,12 +52,14 @@ if (TS && btn) {
 
     const reset = () => { attempts = 0; passedAt = 0; res.hidden = true; TS.setMarks(null); };
     sel.onchange = () => { cur = SENTENCES[+sel.value]; sent.textContent = cur.text; reset(); };
-    start.onclick = () => { reset(); TS.startWords(cur.words); };
-    flawed.onclick = () => { reset(); TS.loadBracket(cur.flawed); };
-    answer.onclick = () => { reset(); TS.loadBracket(cur.key); };
+    // on a phone the box shrinks out of the way once the tree is on the page, and grows again to show the result
+    start.onclick = () => { reset(); TS.startWords(cur.words); if (narrow()) setMin(true); };
+    flawed.onclick = () => { reset(); TS.loadBracket(cur.flawed); if (narrow()) setMin(true); };
+    answer.onclick = () => { reset(); TS.loadBracket(cur.key); if (narrow()) setMin(true); };
 
     check.onclick = () => {
       res.hidden = false; res.className = 'res'; res.textContent = '';
+      if (narrow()) setMin(false);
       const trees = TS.trees();
       if (!trees.length) { res.textContent = 'Nothing on the page yet. Press “Start: just the words”.'; return; }
       if (trees.length > 1) { res.textContent = `There are ${trees.length} separate pieces on the page. Join everything into one tree first.`; return; }

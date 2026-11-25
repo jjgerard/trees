@@ -325,3 +325,16 @@ body.gloss-tab #g-page { display: flex; }
 #mark-demo ul { margin: 6px 0 0; padding-left: 18px; }
 #mark-demo li { margin: 4px 0; }
 #mark-demo li .lab { font-weight: 600; color: var(--bad); }
+#mark-demo .mn { position: absolute; top: 8px; right: 36px; border: 0; background: none; font-size: 16px; padding: 0 6px; }
+#mark-demo.min > :not(h3):not(.act):not(.x):not(.mn):not(.res) { display: none; }
+#mark-demo.min .res { padding: 4px 8px; margin-top: 4px; }
+#mark-demo.min .res ul, #mark-demo.min .res .sub { display: none; }
+#mark-demo.min .row { margin: 4px 0 0; }
+@media (max-width: 900px) {
+  #mark-demo { left: 8px; right: 8px; bottom: 8px; width: auto; max-height: 38vh; padding: 8px 10px; }
+  #mark-demo h3 { font-size: 14px; }
+  #mark-demo .sub { margin-bottom: 4px; }
+  #mark-demo .sent { margin: 2px 0; font-size: 16px; }
+  #mark-demo .row { margin: 4px 0; }
+  #mark-demo button, #mark-demo select { padding: 5px 9px; }
+}
