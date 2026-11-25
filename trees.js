@@ -52,6 +52,7 @@ const DEFAULT_OPTS = () => ({
 let doc = null;               // { nextId, root, arrows:[{id,from,to,depth,label,dash,color}], opts }
 let fmt = 'bracket';          // how the text box writes the tree
 let sel = null;               // { kind:'node'|'arrow', id }
+let marks = null;             // marking demo: Map of node id (string) -> 'ok' | 'wrong', painted behind the labels; cleared by any edit
 let view = { x: 0, y: 0, k: 2 };
 let L = null, bounds = null;  // layout of the current doc and the bounds of what is drawn
 let ui = { mode: 'build', text: false, cat: 'X', zero: true };   // saved with the page, but not part of the tree
@@ -588,6 +589,14 @@ function paintTree(g, Lm, interactive) {
     }
   }
   for (const ln of all) {
+    const mark = interactive && marks && marks.get(ln.id);
+    if (mark) {
+      mk('rect', {
+        class: 'mark ' + mark, x: ln.x - ln.w / 2 - 4, y: ln.top - 3, width: ln.w + 8, height: ln.bot - ln.top + 6, rx: 3,
+        fill: mark === 'wrong' ? 'rgba(179,38,30,.22)' : 'rgba(46,125,50,.16)', stroke: mark === 'wrong' ? '#b3261e' : '#2e7d32',
+        'stroke-width': mark === 'wrong' ? 1 : 0.6, 'pointer-events': 'none',
+      }, gText);
+    }
     paintText(gText, ln.x, ln.y, ln.runs, ln.font, o.subScale);
     grow(ln.x - ln.w / 2, ln.top, ln.x + ln.w / 2, ln.bot);
     if (interactive) {
@@ -725,6 +734,7 @@ function edit(fn, key) {
   changed();
 }
 function changed(opts) {
+  marks = null;
   pruneArrows();
   render();
   refreshUI();
@@ -1654,7 +1664,31 @@ function start() {
   pendingFit = !stage.clientWidth;                      // opened on the Glosses tab: the drawing is hidden, so fit it when it is first shown
 }
 start();
-window.TreeStudio = { PHOTO_ENDPOINT, photoToJpeg, toast, download, onShow: () => { if (pendingFit && stage.clientWidth) { pendingFit = false; fit(); } render(); applyView(); } };     // used by gloss.js
+// ------------------------------------------------------------------ hooks for the marking demo (marking-demo.js)
+const plainTree = n => {                          // the editor's tree as plain { label, children, word, tri, ref } for marking.js
+  const kids = [];
+  for (const c of n.children) {
+    if (n.tri && c.word) for (const w of String(c.label).split(/\s+/).filter(Boolean)) kids.push({ label: w, children: [], word: true, ref: String(c.id) });
+    else kids.push(plainTree(c));
+  }
+  const o = { label: n.label, children: kids, ref: String(n.id) };
+  if (n.word) o.word = true;
+  if (n.tri) o.tri = true;
+  return o;
+};
+const markingHooks = {
+  trees: () => doc.roots.map(plainTree),
+  setMarks: m => { marks = m; render(); },
+  loadBracket: src => loadSource(src),
+  startWords: words => {                          // the sentence's words as loose pieces, ready to be built on
+    edit(() => {
+      doc.roots = words.map((w, i) => Object.assign(newNode(w, { word: true }), { dx: i * 46, dy: 120, placed: true }));
+      doc.arrows = []; sel = null;
+    });
+    fit();
+  },
+};
+window.TreeStudio = { marking: markingHooks, PHOTO_ENDPOINT, photoToJpeg, toast, download, onShow: () => { if (pendingFit && stage.clientWidth) { pendingFit = false; fit(); } render(); applyView(); } };     // used by gloss.js
 // a font that finishes loading after the first paint changes the widths: draw again once the browser is ready
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { render(); });
 
