@@ -4,30 +4,44 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tree studio</title>
-<link rel="stylesheet" href="trees.css?v=8">
+<link rel="stylesheet" href="trees.css?v=9">
 <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
 <link rel="icon" href="icon-32.png?v=2" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="icon-180.png?v=2">
 <meta name="theme-color" content="#4b2340">
 </head>
 <body>
+<script>if (location.hash === '#gloss') document.body.classList.add('gloss-tab');</script>
 <div id="app">
 
   <header id="bar">
     <div class="bar-row" id="bar-1">
       <span class="brand">Tree studio</span>
-      <button class="tool mini" id="btn-undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶<span class="wide"> Undo</span></button>
-      <button class="tool mini" id="btn-redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷<span class="wide"> Redo</span></button>
-      <button class="tool mini" id="btn-newtree" title="Clear the page and start again">New</button>
+      <span class="seg" id="seg-tab" title="Switch between drawing trees and setting out glossed examples">
+        <button data-tab="trees">Trees</button><button data-tab="gloss">Glosses</button>
+      </span>
+      <button class="tool mini tree-only" id="btn-undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶<span class="wide"> Undo</span></button>
+      <button class="tool mini tree-only" id="btn-redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷<span class="wide"> Redo</span></button>
+      <button class="tool mini tree-only" id="btn-newtree" title="Clear the page and start again">New</button>
       <span class="spacer"></span>
-      <button class="tool strong" id="btn-export">Export…</button>
-      <button class="tool" id="btn-help">Help</button>
+      <button class="tool strong tree-only" id="btn-export">Export…</button>
+      <button class="tool tree-only" id="btn-help">Help</button>
+      <button class="tool mini gloss-only" id="g-undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶<span class="wide"> Undo</span></button>
+      <button class="tool mini gloss-only" id="g-redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷<span class="wide"> Redo</span></button>
+      <button class="tool mini gloss-only" id="g-new" title="Clear the page and start again">New</button>
+      <button class="tool strong gloss-only" id="g-export">Export…</button>
+      <button class="tool gloss-only" id="g-help">Help</button>
       <a class="tool" id="btn-about" href="about.html" title="What this is, and what happens to photos">About</a>
     </div>
     <div class="bar-row" id="bar-2">
-      <button class="tool" id="btn-photo-top" hidden title="Take or upload a photo of a hand-drawn tree and turn it into a tree here">📷 Photo</button>
-      <button class="tool" id="btn-text" aria-pressed="false" title="Show or hide the text box: paste or copy brackets / LaTeX">{ } LaTeX<span class="wide"> / text</span></button>
-      <select class="tool" id="examples" title="Load an example tree">
+      <button class="tool gloss-only" id="g-photo" hidden title="Take or upload a photo of glossed examples and turn them into text here">📷 Photo</button>
+      <input type="file" id="g-photo-file" accept="image/*" hidden>
+      <select class="tool gloss-only" id="g-examples" title="Load an example">
+        <option value="">Examples…</option>
+      </select>
+      <button class="tool tree-only" id="btn-photo-top" hidden title="Take or upload a photo of a hand-drawn tree and turn it into a tree here">📷 Photo</button>
+      <button class="tool tree-only" id="btn-text" aria-pressed="false" title="Show or hide the text box: paste or copy brackets / LaTeX">{ } LaTeX<span class="wide"> / text</span></button>
+      <select class="tool tree-only" id="examples" title="Load an example tree">
         <option value="">Examples…</option>
       </select>
     </div>
@@ -257,6 +271,86 @@
     </aside>
 
   </div>
+
+  <!-- ===== the Glosses tab ===== -->
+  <div id="gloss">
+    <aside id="g-left">
+      <div class="head">Examples <small>words separated by spaces</small></div>
+      <div class="pad">
+        <div id="g-list"></div>
+        <div class="btns"><button class="strong" id="g-add">+ Add example</button></div>
+        <div class="muted">Type the example and its gloss with a space between words: each word of the example lines up with the item of the gloss under it.
+          Hyphens and dots stay inside a word. Put <code>{two words}</code> in braces to give one gloss item that contains a space.
+          Capitals such as <code>3SG</code> and <code>PST</code> become small caps. <code>\emph{x}</code> and <code>\textbf{x}</code> work.</div>
+        <div class="muted" id="g-photo-note" hidden>📷 A photo is sent to an AI reader, not stored. Handwriting gets misread, and the word-by-word pairing can slip, so check each example.</div>
+      </div>
+    </aside>
+
+    <section id="g-stage">
+      <div id="g-empty">Type an example, or choose one from <b>Examples…</b>.</div>
+      <div id="g-paper"></div>
+    </section>
+
+    <aside id="g-right">
+      <div class="scroll">
+        <section class="card">
+          <h4>LaTeX <small>(type or paste \gll here and the page follows)</small></h4>
+          <div class="row">
+            <label class="inl">Package
+              <select id="g-pkg">
+                <option value="gb4e">gb4e</option>
+                <option value="linguex">linguex</option>
+                <option value="expex">expex</option>
+                <option value="plain">No package (tabular)</option>
+              </select>
+            </label>
+            <button class="small" id="g-copy">Copy</button>
+          </div>
+          <textarea id="g-out" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
+          <div id="g-err" role="status"></div>
+        </section>
+
+        <section class="card">
+          <h4>Numbering</h4>
+          <div class="grid2">
+            <label class="f span2">Number the examples
+              <select data-g="numbering">
+                <option value="each">(1) (2) (3)…, one number each</option>
+                <option value="group">One number, then a. b. c.</option>
+                <option value="none">No numbers</option>
+              </select>
+            </label>
+            <label class="f">First number <input type="number" data-g="start" min="1" max="999" step="1"></label>
+          </div>
+        </section>
+
+        <section class="card">
+          <h4>Type</h4>
+          <div class="grid2">
+            <label class="f span2">Font <input type="text" list="fonts" data-g="family" spellcheck="false"></label>
+            <label class="f">Example (pt) <input type="number" data-g="size" min="4" max="60" step="0.5"></label>
+            <label class="f">Gloss (pt) <input type="number" data-g="gsize" min="4" max="60" step="0.5"></label>
+            <label class="f">Translation (pt) <input type="number" data-g="tsize" min="4" max="60" step="0.5"></label>
+            <label class="f">Quote marks
+              <select data-g="quotes"><option value="single">‘single’</option><option value="double">“double”</option><option value="none">none</option></select>
+            </label>
+            <label class="inl"><input type="checkbox" data-g="italic"> <i>italic</i> example line</label>
+            <label class="inl"><input type="checkbox" data-g="sc"> small caps for CAPITALS in the gloss</label>
+          </div>
+        </section>
+
+        <section class="card">
+          <h4>Spacing</h4>
+          <div class="grid2">
+            <label class="f">Between words (pt) <input type="number" data-g="gap" min="0" max="60" step="1"></label>
+            <label class="f">Wrap at (pt, 0 = never) <input type="number" data-g="wrap" min="0" max="2000" step="10"></label>
+            <label class="f">Margin (pt) <input type="number" data-g="margin" min="0" max="100" step="1"></label>
+            <label class="inl"><input type="checkbox" data-g="transparent"> Transparent background</label>
+          </div>
+        </section>
+      </div>
+    </aside>
+  </div>
 </div>
 
 <div id="toast"></div>
@@ -324,10 +418,43 @@
   <p><b>Type.</b> Fonts, sizes, bold/italic and colour are separate for labels and for words, and any node can override them. Labels take <code>_i</code>, <code>^0</code>, <code>V'</code> → V′, <code>\emph{…}</code>, <code>\sout{…}</code> and Greek like <code>\phi</code>.</p>
   <p><b>View.</b> Drag the background or scroll to pan; Ctrl/⌘ + scroll or pinch to zoom; <b>Fit</b> brings everything back.</p>
   <p><b>Out.</b> <b>Export</b> gives SVG, PNG, or PDF (via print). The text box gives brackets, qtree and forest. Positions you dragged and arrows are in the pictures but can’t be written in qtree or forest, which place everything themselves.</p>
+  <p><b>Glossed examples</b> (interlinear text) are on the <b>Glosses</b> tab at the top.</p>
   <p>Everything is saved in this browser. <a href="about.html">About this tool, and what happens to photos</a>.</p>
   <form method="dialog" class="end"><button>Got it</button></form>
 </dialog>
 
-<script src="trees.js?v=9"></script>
+
+<dialog id="dlg-gexport">
+  <h3>Export</h3>
+  <p class="muted">What you see on the white page is what is exported. Sizes are real: 12&nbsp;pt text is 12&nbsp;pt in the file.</p>
+  <div class="btns col">
+    <button class="strong" id="gx-svg">SVG <small>(vector; opens in Inkscape, Illustrator, Word, Keynote…)</small></button>
+    <div class="btns">
+      <button class="strong" id="gx-png">PNG</button>
+      <label class="inl">at <select id="gx-dpi"><option>150</option><option selected>300</option><option>600</option></select> dpi</label>
+    </div>
+    <button class="strong" id="gx-tex">LaTeX document <small>(.tex, in the package chosen; compile with xelatex or lualatex for IPA)</small></button>
+    <button class="strong" id="gx-pdf">Print / save as PDF <small>(vector; choose “Save as PDF”)</small></button>
+    <hr>
+    <button id="gx-json">Save these examples as a file <small>(.json)</small></button>
+    <button id="gx-open">Open saved examples…</button>
+    <input type="file" id="gx-file" accept=".json,application/json" hidden>
+  </div>
+  <form method="dialog" class="end"><button>Close</button></form>
+</dialog>
+
+<dialog id="dlg-ghelp">
+  <h3>How the gloss page works</h3>
+  <p><b>Type it.</b> Each example has three boxes: the example, its word-by-word gloss, and the free translation. Separate words with spaces. Word 1 of the example sits over item 1 of the gloss, and so on, so the columns always line up. If the two lines have a different number of words the empty place is marked in red.</p>
+  <p><b>Inside a word.</b> Hyphens, dots, equals signs and so on are just text. To make one gloss item that contains a space, put it in braces: <code>{the dog}</code>. CAPITALS in the gloss (<code>3SG</code>, <code>PST</code>) are set in small caps and written as <code>\textsc{3sg}</code>. <code>\emph{…}</code>, <code>\textbf{…}</code> and <code>\textsc{…}</code> work anywhere.</p>
+  <p><b>Several examples.</b> <b>+ Add example</b> adds another. Under <b>Numbering</b>, choose one number each, or one number with a. b. c. for a set.</p>
+  <p><b>LaTeX.</b> Pick gb4e, linguex, expex or plain tabular and copy the result into your paper. You can also paste your own <code>\gll</code> (gb4e, linguex) or <code>\gla … \glb …</code> (expex) into the box and the page reads it. gb4e, linguex and expex number their examples themselves, so “No numbers” only applies to the picture and the plain tabular.</p>
+  <p><b>📷 Photo</b> reads glossed examples from a photo or a page of a book. Check every word: handwriting, special characters and the word-by-word pairing can all be misread.</p>
+  <p>Everything is saved in this browser. <a href="about.html">About this tool, and what happens to photos</a>.</p>
+  <form method="dialog" class="end"><button>Got it</button></form>
+</dialog>
+
+<script src="trees.js?v=10"></script>
+<script src="gloss.js?v=1"></script>
 </body>
 </html>

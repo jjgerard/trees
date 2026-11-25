@@ -874,7 +874,7 @@ if (PHOTO_ENDPOINT) {
   for (const id of ['photo-file', 'photo-cam']) $(id).addEventListener('change', e => { readPhoto(e.target.files[0]); e.target.value = ''; });
   stage.addEventListener('dragover', e => { if ([...(e.dataTransfer?.types || [])].includes('Files')) e.preventDefault(); });
   stage.addEventListener('drop', e => { const f = e.dataTransfer?.files?.[0]; if (f && /^image\//.test(f.type)) { e.preventDefault(); readPhoto(f); } });
-  document.addEventListener('paste', e => { const f = [...(e.clipboardData?.files || [])].find(x => /^image\//.test(x.type)); if (f) { e.preventDefault(); readPhoto(f); } });
+  document.addEventListener('paste', e => { if (document.body.classList.contains('gloss-tab')) return; const f = [...(e.clipboardData?.files || [])].find(x => /^image\//.test(x.type)); if (f) { e.preventDefault(); readPhoto(f); } });
 }
 
 // ------------------------------------------------------------------ inline retyping
@@ -1152,6 +1152,7 @@ function moveSelection(key) {                // arrows walk the tree: up to the 
 function zoomBy(f) { const r = stage.getBoundingClientRect(); zoomAt(r.left + r.width / 2, r.top + r.height / 2, f); }
 function toggleMode() { ui.mode = ui.mode === 'build' ? 'nudge' : 'build'; applyUI(); save(); toast(ui.mode === 'build' ? 'Build: dragging joins and pulls pieces off' : 'Nudge: dragging only slides'); }
 document.addEventListener('keydown', e => {
+  if (document.body.classList.contains('gloss-tab')) return;       // the Glosses tab has its own page
   if (document.querySelector('dialog[open]')) return;
   const typing = /^(INPUT|TEXTAREA|SELECT)$/.test((e.target.tagName || ''));
   const mod = e.ctrlKey || e.metaKey, k = e.key, lower = k.length === 1 ? k.toLowerCase() : k;
@@ -1637,6 +1638,7 @@ let toastTimer = null;
 function toast(t) { const el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('on'), 2200); }
 
 // ------------------------------------------------------------------ start
+let pendingFit = false;
 function start() {
   let saved = null;
   try { saved = JSON.parse(localStorage.getItem(STORE) || localStorage.getItem(OLD_STORE)); } catch (e) { /* ignore */ }
@@ -1649,8 +1651,10 @@ function start() {
     doc = { nextId: 1, roots: [], arrows: [], opts: DEFAULT_OPTS() };      // a blank page
   }
   applyUI(); render(); refreshUI(); syncSource(); fit();
+  pendingFit = !stage.clientWidth;                      // opened on the Glosses tab: the drawing is hidden, so fit it when it is first shown
 }
 start();
+window.TreeStudio = { PHOTO_ENDPOINT, photoToJpeg, toast, download, onShow: () => { if (pendingFit && stage.clientWidth) { pendingFit = false; fit(); } render(); applyView(); } };     // used by gloss.js
 // a font that finishes loading after the first paint changes the widths: draw again once the browser is ready
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { render(); });
 

@@ -19,7 +19,7 @@ body {
 [hidden] { display: none !important; }
 input, textarea, select, button { font: inherit; color: inherit; }
 code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .92em; background: var(--panel-2); padding: 0 3px; border-radius: 3px; }
-#app { display: grid; grid-template-rows: auto 1fr; height: 100%; }
+#app { display: grid; grid-template-rows: auto 1fr; grid-template-columns: minmax(0, 1fr); height: 100%; }
 
 /* ---- top bar ---- */
 #bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 8px 14px; background: var(--accent); color: #fff; }
@@ -216,6 +216,63 @@ kbd { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; ba
   .tool { padding: 5px 10px; }
   #bar-2 #examples { margin-left: auto; max-width: 42vw; }
   #bar-2 .tool { font-size: 13px; }
+}
+
+
+/* ---- tabs and the Glosses page ---- */
+#seg-tab { order: 1; background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.4); }
+#seg-tab button { color: #fff; padding: 4px 12px; font-size: 13px; }
+#seg-tab button + button { border-left-color: rgba(255,255,255,.4); }
+#seg-tab button.on { background: #fff; color: var(--accent); font-weight: 600; }
+body.gloss-tab .tree-only, body.gloss-tab #photo-menu { display: none !important; }
+body:not(.gloss-tab) .gloss-only { display: none !important; }
+body.gloss-tab #main { display: none; }
+#g-undo { order: 2; } #g-redo { order: 3; } #g-new { order: 4; }
+#g-photo { order: 5; } #g-examples { order: 11; }
+#g-export { order: 8; } #g-help { order: 9; }
+
+#gloss { display: none; min-height: 0; }
+body.gloss-tab #gloss { display: flex; }
+#g-left, #g-right { background: var(--panel); display: flex; flex-direction: column; min-height: 0; flex: none; }
+#g-left { width: 330px; border-right: 1px solid var(--line); }
+#g-right { width: 340px; border-left: 1px solid var(--line); }
+#g-stage { flex: 1; min-width: 0; min-height: 0; position: relative; background: var(--board); overflow: auto; }
+#g-paper { margin: 22px auto; width: max-content; max-width: none; background: #fff; box-shadow: 0 1px 8px rgba(0,0,0,.18); }
+#g-paper.tr { background: repeating-conic-gradient(#f0eee8 0 25%, #fff 0 50%) 0 0 / 14px 14px; }
+#g-paper svg { display: block; }
+#g-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--muted); line-height: 1.7; pointer-events: none; padding: 20px; }
+#g-empty[hidden] { display: none; }
+
+.gex { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px 8px; margin-bottom: 10px; }
+.gex .gh { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.gex .gh b { color: var(--ink); margin-right: auto; }
+.gex .gh button { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 1px 7px; font-size: 12px; cursor: pointer; line-height: 1.5; }
+.gex .gh button:hover:not(:disabled) { background: var(--panel-2); }
+.gex .gh button:disabled { opacity: .35; cursor: default; }
+.gex .gh button.x { color: var(--bad); }
+.gex label.f { margin-bottom: 4px; }
+.gex input[type=text] { font-family: "Charis SIL", "Gentium Plus", "Doulos SIL", "Times New Roman", serif; font-size: 16px; padding: 5px 7px; }
+.gex .warn { font-size: 12px; color: var(--bad); line-height: 1.35; }
+.gex .warn:empty { display: none; }
+#g-out {
+  width: 100%; height: 230px; resize: vertical; padding: 8px 9px; border: 1px solid var(--line); border-radius: 8px; margin-top: 6px;
+  background: #fff; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.45; white-space: pre; overflow: auto; tab-size: 2;
+}
+#g-out:focus { outline: 2px solid #b79ac6; }
+#g-err { min-height: 16px; font-size: 12px; color: var(--bad); line-height: 1.35; margin-top: 3px; }
+#g-err.ok { color: var(--muted); }
+#g-photo-note[hidden] { display: none; }
+@media (max-width: 900px) {
+  body.gloss-tab #gloss { flex-direction: column; }
+  #g-stage { order: -1; flex: none; height: 46vh; }
+  #g-left, #g-right { border: 0; border-top: 1px solid var(--line); width: auto; }
+}
+@media (max-width: 700px) {
+  #bar .brand { display: none; }                   /* the tabs say it already, and the row is tight */
+  .bar-row { flex-wrap: wrap; }
+  #seg-tab { flex: none; }
+  #seg-tab button { padding: 3px 9px; }
+  #bar-2 #g-examples { margin-left: auto; max-width: 42vw; }
 }
 
 /* ---- print: just the tree ---- */
