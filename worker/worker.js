@@ -30,18 +30,27 @@ Example with arrows:
 
 If the image does not contain a syntax tree, reply exactly: NOTREE`;
 
-const GLOSS_PROMPT = `You are reading a photo of interlinear glossed examples from linguistics: an example line in some language, a word-by-word gloss line under it, and usually a free translation. Reply with JSON and NOTHING else (no explanation, no code fence), in exactly this shape:
+const GLOSS_PROMPT = `You are reading a photo of interlinear glossed text from linguistics: an example line in some language with a word-by-word gloss line under it, usually plus a free translation. The photo may be of a screen or a book page, may be cropped, and may have other marks around it (for example the tops of tree-diagram lines under the gloss): ignore everything that is not the example line, the gloss line or the translation. Reply with JSON and NOTHING else (no explanation, no code fence), in exactly this shape:
 {"examples":[{"src":"...","gloss":"...","trans":"..."}]}
 
 Rules:
 - One entry per glossed example, in reading order. Sub-examples (a, b, c) are separate entries. Ignore example numbers and letters, language names, and citations.
-- "src" is the example line. Separate words with single spaces. Keep every hyphen, equals sign, dot and tilde exactly as written. Transcribe special characters faithfully (IPA symbols, diacritics, tone marks).
-- "gloss" is the gloss line, ONE item for each word of "src", separated by single spaces, so the two lines have the same number of space-separated items. If one gloss item is several words (for example 'the dog'), join them in braces: {the dog}. Keep grammatical labels in capitals exactly as written (3SG, PST, NOM.SG).
-- If a word of the example is also a multi-word unit that you had to keep together, put it in braces too: {word one}.
-- "trans" is the free translation without its quotation marks. Use "" if there is none.
-- If the example has an extra line (for example a native script line above a transcription), use the line that is glossed word-by-word as "src" and ignore the other.
-- If something is illegible, write your best guess followed by ?.
-- If the image contains no glossed example, reply exactly: {"examples":[]}`;
+- "src" is the example line, transcribed exactly: keep every hyphen, equals sign, dot, tilde, bold or underlined blank (such as "?") and special character (IPA symbols, diacritics, tone marks, Romanian ă â î ș ț and so on).
+- "gloss" is the gloss line. Its items are lined up under the words of the example line, but ONE gloss item can sit under SEVERAL example words, and some example words (for example a blank "?") can have no gloss at all. Look at where each gloss item sits horizontally.
+- Both lines must end up with the same number of items, because each item is one column. Make that so by GROUPING IN BRACES:
+  * when one gloss item sits under several example words, put those example words in braces together in "src": for "a urmărit" over "chased", write {a urmărit} in src and chased in gloss.
+  * when a gloss item is itself several words ("the cat"), put it in braces in "gloss": {the cat}.
+  * when an example word has no gloss, put an empty pair of braces {} in "gloss" in its place.
+  Items are separated by single spaces; text inside braces may contain spaces.
+- Keep grammatical labels in capitals exactly as written (3SG, PST, NOM.SG).
+- "trans" is the free translation without its quotation marks. Use "" if there is none. A missing translation is normal: still return the example.
+- If something is illegible, write your best guess followed by ?. Always return your best attempt at any example line with a gloss line under it. Only reply {"examples":[]} if there is no gloss line at all.
+
+Worked example. For a photo of
+  Pisica  a urmărit  câinele  înainte  de  ?  a alerga  afară.
+  the cat  chased    the dog  before   of     to run    outside
+reply:
+{"examples":[{"src":"Pisica {a urmărit} câinele înainte de ? {a alerga} afară.","gloss":"{the cat} chased {the dog} before of {} {to run} outside","trans":""}]}`;
 
 export default {
   async fetch(req, env) {
