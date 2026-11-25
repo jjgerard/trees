@@ -210,7 +210,7 @@ export function mark(student, keys) {
   const nodes = s.nodes.map(n => {
     const codes = best.marks.get(n.id) || [];
     return {
-      id: n.id, label: n.label, span: n.span, status: codes.length ? 'wrong' : 'ok',
+      id: n.id, ref: n.ref, label: n.label, span: n.span, status: codes.length ? 'wrong' : 'ok',
       reasons: codes.map(code => ({ code, message: REASON[code](n) })),
     };
   });
