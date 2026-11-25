@@ -25,17 +25,18 @@
       <button class="tool mini tree-only" id="btn-newtree" title="Clear the page and start again">New</button>
       <span class="spacer"></span>
       <button class="tool strong tree-only" id="btn-export">Export…</button>
-      <button class="tool tree-only" id="btn-help">Help</button>
+      <button class="tool tree-only" id="btn-help"><span class="wide">Help</span><span class="q">?</span></button>
       <button class="tool mini gloss-only" id="g-undo" title="Undo (Ctrl+Z)" aria-label="Undo">↶<span class="wide"> Undo</span></button>
       <button class="tool mini gloss-only" id="g-redo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo">↷<span class="wide"> Redo</span></button>
       <button class="tool mini gloss-only" id="g-new" title="Clear the page and start again">New</button>
       <button class="tool strong gloss-only" id="g-export">Export…</button>
-      <button class="tool gloss-only" id="g-help">Help</button>
+      <button class="tool gloss-only" id="g-help"><span class="wide">Help</span><span class="q">?</span></button>
       <a class="tool" id="btn-about" href="about.html" title="What this is, and what happens to photos">About</a>
     </div>
     <div class="bar-row" id="bar-2">
       <button class="tool gloss-only" id="g-photo" hidden title="Take or upload a photo of glossed examples and turn them into text here">📷 Photo</button>
       <input type="file" id="g-photo-file" accept="image/*" hidden>
+      <button class="tool gloss-only" id="g-text" aria-pressed="false" title="Show or hide the LaTeX box: copy the examples out, or paste \gll in">{ } LaTeX</button>
       <select class="tool gloss-only" id="g-examples" title="Load an example">
         <option value="">Examples…</option>
       </select>
@@ -273,7 +274,7 @@
   </div>
 
   <!-- ===== the Glosses tab ===== -->
-  <div id="gloss">
+  <div id="g-page">
     <aside id="g-left">
       <div class="head">Examples <small>words separated by spaces</small></div>
       <div class="pad">
@@ -286,6 +287,25 @@
       </div>
     </aside>
 
+    <aside id="g-latex" hidden>
+      <div class="head">LaTeX <small>type or paste, the page follows</small><button class="small close-pop" id="g-text-close">Done</button></div>
+      <div class="pad">
+        <div class="row">
+          <label class="inl">Package
+            <select id="g-pkg">
+              <option value="gb4e">gb4e</option>
+              <option value="linguex">linguex</option>
+              <option value="expex">expex</option>
+              <option value="plain">No package (tabular)</option>
+            </select>
+          </label>
+          <button class="small" id="g-copy">Copy</button>
+        </div>
+        <textarea id="g-out" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="Paste \gll … \\ … \\ \trans … (gb4e, linguex) or \gla … // \glb … // (expex) and the examples appear."></textarea>
+        <div id="g-err" role="status"></div>
+      </div>
+    </aside>
+
     <section id="g-stage">
       <div id="g-empty">Type an example, or choose one from <b>Examples…</b>.</div>
       <div id="g-paper"></div>
@@ -293,23 +313,6 @@
 
     <aside id="g-right">
       <div class="scroll">
-        <section class="card">
-          <h4>LaTeX <small>(type or paste \gll here and the page follows)</small></h4>
-          <div class="row">
-            <label class="inl">Package
-              <select id="g-pkg">
-                <option value="gb4e">gb4e</option>
-                <option value="linguex">linguex</option>
-                <option value="expex">expex</option>
-                <option value="plain">No package (tabular)</option>
-              </select>
-            </label>
-            <button class="small" id="g-copy">Copy</button>
-          </div>
-          <textarea id="g-out" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"></textarea>
-          <div id="g-err" role="status"></div>
-        </section>
-
         <section class="card">
           <h4>Numbering</h4>
           <div class="grid2">
@@ -448,7 +451,7 @@
   <p><b>Type it.</b> Each example has three boxes: the example, its word-by-word gloss, and the free translation. Separate words with spaces. Word 1 of the example sits over item 1 of the gloss, and so on, so the columns always line up. If the two lines have a different number of words the empty place is marked in red.</p>
   <p><b>Inside a word.</b> Hyphens, dots, equals signs and so on are just text. To make one gloss item that contains a space, put it in braces: <code>{the dog}</code>. CAPITALS in the gloss (<code>3SG</code>, <code>PST</code>) are set in small caps and written as <code>\textsc{3sg}</code>. <code>\emph{…}</code>, <code>\textbf{…}</code> and <code>\textsc{…}</code> work anywhere.</p>
   <p><b>Several examples.</b> <b>+ Add example</b> adds another. Under <b>Numbering</b>, choose one number each, or one number with a. b. c. for a set.</p>
-  <p><b>LaTeX.</b> Pick gb4e, linguex, expex or plain tabular and copy the result into your paper. You can also paste your own <code>\gll</code> (gb4e, linguex) or <code>\gla … \glb …</code> (expex) into the box and the page reads it. gb4e, linguex and expex number their examples themselves, so “No numbers” only applies to the picture and the plain tabular.</p>
+  <p><b>LaTeX.</b> Press <b>{ } LaTeX</b> to show the box, pick gb4e, linguex, expex or plain tabular, and copy the result into your paper. You can also paste your own <code>\gll</code> (gb4e, linguex) or <code>\gla … \glb …</code> (expex) into the box and the page reads it. gb4e, linguex and expex number their examples themselves, so “No numbers” only applies to the picture and the plain tabular.</p>
   <p><b>📷 Photo</b> reads glossed examples from a photo or a page of a book. Check every word: handwriting, special characters and the word-by-word pairing can all be misread.</p>
   <p>Everything is saved in this browser. <a href="about.html">About this tool, and what happens to photos</a>.</p>
   <form method="dialog" class="end"><button>Got it</button></form>
