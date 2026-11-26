@@ -2,6 +2,7 @@
 
 A drawing tool for publication-quality syntax trees. It runs in the browser, needs no account or install, stores nothing on a server, and has no build step.
 The one exception is the optional **From a photo** button: the photo is sent through a small proxy to an AI model that reads it, and is not kept.
+It counts visits anonymously (how many, and from which country) with a cookie-free analytics script; see `analytics.js`.
 
 **Use it:** https://jjgerard.github.io/trees/
 
